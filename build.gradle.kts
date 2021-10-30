@@ -30,7 +30,8 @@ dependencies {
     implementation("org.eclipse.jgit:org.eclipse.jgit:5.2.1.201812262042-r"){
         exclude("com.jcraft","jsch")
     }
-
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket:2.5.6")
 
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-web")
