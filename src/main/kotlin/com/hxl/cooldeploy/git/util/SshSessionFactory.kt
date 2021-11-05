@@ -1,4 +1,4 @@
-package com.hxl.cooldeploy.utils
+package com.hxl.cooldeploy.git.util
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session

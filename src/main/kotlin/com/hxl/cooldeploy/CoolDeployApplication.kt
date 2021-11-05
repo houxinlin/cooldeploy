@@ -1,13 +1,20 @@
 package com.hxl.cooldeploy
 
-import com.hxl.cooldeploy.utils.GitUtils
+import org.springframework.boot.SpringApplicationRunListener
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import java.io.File
+import org.springframework.context.annotation.Bean
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
+
 
 @SpringBootApplication
-class CoolDeployApplication
+class CoolDeployApplication : SpringApplicationRunListener {
+
+}
 
 fun main(args: Array<String>) {
-    runApplication<CoolDeployApplication>(*args)
+    var application = runApplication<CoolDeployApplication>(*args)
+
 }

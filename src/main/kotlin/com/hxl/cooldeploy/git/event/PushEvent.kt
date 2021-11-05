@@ -1,11 +1,4 @@
-package com.hxl.cooldeploy.event
-
-import com.hxl.cooldeploy.event.PushEvent.RepositoryDTO
-import com.hxl.cooldeploy.event.PushEvent.PusherDTO
-import com.hxl.cooldeploy.event.PushEvent.SenderDTO
-import com.hxl.cooldeploy.event.PushEvent.CommitsDTO
-import com.hxl.cooldeploy.event.PushEvent.HeadCommitDTO
-import com.hxl.cooldeploy.event.PushEvent.RepositoryDTO.OwnerDTO
+package com.hxl.cooldeploy.git.event
 
 class PushEvent {
     var ref: String? = null

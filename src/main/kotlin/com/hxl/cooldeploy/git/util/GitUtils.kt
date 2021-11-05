@@ -1,13 +1,8 @@
-package com.hxl.cooldeploy.utils
+package com.hxl.cooldeploy.git.util
 
-import com.jcraft.jsch.JSch
-import com.jcraft.jsch.Session
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.api.GitCommand
 import org.eclipse.jgit.api.TransportConfigCallback
 import org.eclipse.jgit.transport.*
-import org.eclipse.jgit.util.FS
 import java.io.File
 
 

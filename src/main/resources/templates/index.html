@@ -1,0 +1,77 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <link rel="stylesheet" th:href="@{/css/public.css}">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <script src="https://unpkg.com/vue@next"></script>
+
+    <script src="https://unpkg.com/vue-router@next"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    <title>自动部署</title>
+</head>
+<body>
+<div id="app">
+    <router-link to="/">Go to Home</router-link>
+    <router-link to="/about">Go to About</router-link>
+    <el-container>
+        <el-header>Header</el-header>
+        <el-container class="container" >
+            <el-aside width="200px">
+                <el-menu router
+
+                        class="el-menu-vertical-demo"
+            >
+                    <el-menu-item :index="about">
+                        <span>项目部署</span>
+                    </el-menu-item>
+                    <el-menu-item :index="about">
+                        <span>系统设置</span>
+                    </el-menu-item>
+                </el-menu>
+            </el-aside>
+            <el-main>
+                <router-view></router-view>
+            </el-main>
+        </el-container>
+    </el-container>
+
+</div>
+<script>
+
+    const Home = { template: require('project.html')}
+    const About = { template: '<div>About</div>' }
+
+    // 2. 定义一些路由
+    // 每个路由都需要映射到一个组件。
+    // 我们后面再讨论嵌套路由。
+    const routes = [
+        { path: '/', component: Home },
+        { path: '/about', component: About },
+    ]
+
+    // 3. 创建路由实例并传递 `routes` 配置
+    // 你可以在这里输入更多的配置，但我们在这里
+    // 暂时保持简单
+    const router = VueRouter.createRouter({
+        // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
+        history: VueRouter.createWebHashHistory(),
+        routes, // `routes: routes` 的缩写
+    })
+
+
+    const App = {
+        data() {
+            return {
+                message: "Hello Element Plus",
+            };
+        },
+    };
+    const app = Vue.createApp(App);
+    app.use(router)
+    app.use(ElementPlus);
+    app.mount("#app");
+</script>
+</body>
+</html>
