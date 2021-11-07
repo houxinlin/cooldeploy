@@ -25,6 +25,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.jcraft/jsch
     implementation("com.jcraft:jsch:0.1.55")
 
+    // https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api
+// https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api
+    implementation("org.gradle:gradle-tooling-api:7.3-20210825160000+0000")
+
+
     implementation("com.alibaba:fastjson:1.2.78")
 // https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
     implementation("org.eclipse.jgit:org.eclipse.jgit:5.2.1.201812262042-r"){

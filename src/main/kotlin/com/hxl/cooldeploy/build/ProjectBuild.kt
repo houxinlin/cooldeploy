@@ -20,7 +20,7 @@ class ProjectBuild {
     fun getProjectBuildTool(project: String): BuildToolEnum {
         var listTools = BuildToolEnum.listTools()
         for (item in listTools) {
-            var projectPath = DirectoryUtils.getProjectPath(project)
+            var projectPath = project
             var featuresFileName = item.featuresFileName
             if (projectPath.toFile().hasChild(*featuresFileName.toTypedArray())){
                 return item;

@@ -1,12 +1,25 @@
 package com.hxl.cooldeploy.build
 
-enum class BuildToolEnum(val toolName: String, val featuresFileName: List<String>) {
-    GRADLE("gradle", mutableListOf()),
-    MAVEN("maven", mutableListOf()),
-    NPM("npm", mutableListOf("package.json")),
-    NONE("none", mutableListOf());
+import com.hxl.cooldeploy.build.impl.Gradle
+import com.hxl.cooldeploy.build.impl.Maven
+import com.hxl.cooldeploy.build.impl.None
+import com.hxl.cooldeploy.build.impl.Npm
+import kotlin.reflect.KClass
 
-    companion object{
+enum class BuildToolEnum(
+    val buildClass: KClass<*>,
+    val toolName: String,
+    val featuresFileName: List<String>
+) {
+    GRADLE(Gradle::class, "gradle", mutableListOf("gradlew", "gradle/wrapper/gradle-wrapper.jar")),
+    MAVEN(Maven::class,"maven", mutableListOf()),
+    NPM(Npm::class,"npm", mutableListOf("package.json")),
+    NONE(None::class,"none", mutableListOf());
+
+    override fun toString(): String {
+        return  this.toolName
+    }
+    companion object {
         @JvmStatic
         fun listTools(): MutableList<BuildToolEnum> {
             return mutableListOf(BuildToolEnum.GRADLE, BuildToolEnum.MAVEN, BuildToolEnum.NPM)
