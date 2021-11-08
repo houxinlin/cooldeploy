@@ -24,11 +24,9 @@ class ProjectController {
     fun cloneProject(@JsonObjectValue("address") address: String?): String {
         address?.let {
             var project = projectService.cloneProject(address)
-
             println("${project}")
-
         }
-        return "a"
+        return "clone"
     }
 
     @GetMapping("listTasks")

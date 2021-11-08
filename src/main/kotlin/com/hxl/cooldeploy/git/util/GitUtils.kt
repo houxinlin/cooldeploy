@@ -1,5 +1,6 @@
 package com.hxl.cooldeploy.git.util
 
+import com.hxl.cooldeploy.kotlin.extent.toFile
 import org.eclipse.jgit.api.CloneCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.TransportConfigCallback
@@ -11,14 +12,18 @@ import java.io.File
 class GitUtils {
     companion object {
         fun pull(dir: String): Boolean {
-            var pull = Git.open(File(dir)).pull().call()
+            var pull = Git.open(dir.toFile()).pull().call()
             return pull.isSuccessful
+        }
+        fun  gitLog(dir:String):String{
+            var first = Git.open(dir.toFile()).log().call().first()
+            return first.name;
         }
 
         fun clone(url: String, dir: String): Boolean {
             Git.cloneRepository()
                 .setURI(url)
-                .setDirectory(File(dir))
+                .setDirectory(dir.toFile())
                 .setTransportConfigCallback(object : TransportConfigCallback {
                     override fun configure(transport: Transport?) {
                         val sshTransport = transport as SshTransport

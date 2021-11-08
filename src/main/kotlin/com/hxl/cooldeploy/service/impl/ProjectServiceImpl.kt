@@ -59,6 +59,7 @@ class ProjectServiceImpl : IProjectService {
         var projectList = mutableListOf<ProjectBean>()
         for (item in projectsPathList) {
             projectList.add(ProjectBean().apply {
+                firstCommitId=GitUtils.gitLog(item)
                 projectPath = item
                 projectName = Paths.get(item).last().toString()
                 this.buildTool = projectBuild.getProjectBuildTool(projectPath)
