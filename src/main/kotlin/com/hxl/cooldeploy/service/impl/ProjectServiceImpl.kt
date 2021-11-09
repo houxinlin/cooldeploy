@@ -8,6 +8,8 @@ import com.hxl.cooldeploy.git.event.PushEvent
 import com.hxl.cooldeploy.service.IProjectService
 import com.hxl.cooldeploy.utils.DirectoryUtils
 import com.hxl.cooldeploy.git.util.GitUtils
+import com.hxl.cooldeploy.kotlin.extent.toArrayList
+import com.hxl.cooldeploy.kotlin.extent.toFile
 import com.hxl.cooldeploy.utils.FileUtils
 import com.hxl.cooldeploy.vo.ProjectConfigVO
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +25,7 @@ class ProjectServiceImpl : IProjectService {
     @Async
     override fun execTask(projectName: String, taskName: String) {
         if (listProject().find { it.projectName == projectName }?.buildTool == BuildToolEnum.GRADLE) {
-            return Gradle.execTask(DirectoryUtils.getProjectPath(projectName),taskName)
+            return Gradle.execTask(DirectoryUtils.getProjectPath(projectName), taskName)
         }
     }
 
@@ -57,15 +59,24 @@ class ProjectServiceImpl : IProjectService {
     override fun listProject(): List<ProjectBean> {
         var projectsPathList = DirectoryUtils.listProjects()
         var projectList = mutableListOf<ProjectBean>()
+
         for (item in projectsPathList) {
-            projectList.add(ProjectBean().apply {
-                firstCommitId=GitUtils.gitLog(item)
-                projectPath = item
-                projectName = Paths.get(item).last().toString()
-                this.buildTool = projectBuild.getProjectBuildTool(projectPath)
-            })
+            var projectBean = ProjectBean()
+            applyProjectProperty(item,projectBean)
+            projectList.add(projectBean)
         }
         return projectList;
+    }
+
+    fun applyProjectProperty(path:String,item: ProjectBean) {
+        item.apply {
+            shell=FileUtils.readString(DirectoryUtils.getProjectShellStorageDir(path))
+            buildCommands=DirectoryUtils.getProjectCommandStorageDir(Paths.get(path).last().toString()).toFile().toArrayList()
+            firstCommitId = GitUtils.gitLog(path)
+            projectPath = path
+            projectName = Paths.get(path).last().toString()
+            buildTool = projectBuild.getProjectBuildTool(projectPath)
+        }
     }
 
     override fun cloneProject(sshUrl: String, dir: String): Boolean {

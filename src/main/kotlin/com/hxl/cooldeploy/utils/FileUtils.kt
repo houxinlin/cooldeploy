@@ -11,4 +11,9 @@ object FileUtils {
         file.parentFile.mkdirs()
         Files.write(Paths.get(str), body.toByteArray())
     }
+
+    fun readString(str: String, default: String = ""): String {
+        if (!str.toFile().exists()) return default
+        return Files.readAllBytes(Paths.get(str)).decodeToString()
+    }
 }
