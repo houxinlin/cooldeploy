@@ -23,8 +23,13 @@ fun File.hasChild(vararg names: String): Boolean {
 }
 
 fun File.toArrayList(): List<String> {
-    var objectMapper = ObjectMapper()
-    var type = TypeFactory.defaultInstance().constructArrayType(String::class.java)
-    var list: Array<String> = objectMapper.readValue<Array<String>>(this, type)
-    return list.toList()
+    try {
+        var objectMapper = ObjectMapper()
+        var type = TypeFactory.defaultInstance().constructArrayType(String::class.java)
+        var list: Array<String> = objectMapper.readValue<Array<String>>(this, type)
+        return list.toList()
+
+    } catch (e: Exception) {
+        return emptyList();
+    }
 }

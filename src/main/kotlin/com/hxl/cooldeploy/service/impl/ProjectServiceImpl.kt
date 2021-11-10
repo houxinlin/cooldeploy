@@ -10,6 +10,7 @@ import com.hxl.cooldeploy.utils.DirectoryUtils
 import com.hxl.cooldeploy.git.util.GitUtils
 import com.hxl.cooldeploy.kotlin.extent.toArrayList
 import com.hxl.cooldeploy.kotlin.extent.toFile
+import com.hxl.cooldeploy.kotlin.extent.toStringJson
 import com.hxl.cooldeploy.utils.FileUtils
 import com.hxl.cooldeploy.vo.ProjectConfigVO
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,11 +38,16 @@ class ProjectServiceImpl : IProjectService {
     }
 
     override fun saveConfig(body: ProjectConfigVO): String {
+        /**
+         * 项目是否存在
+         */
         if (DirectoryUtils.hasProject(body.projectName)) {
+            //保存command
             FileUtils.writeString(
                 DirectoryUtils.getProjectCommandStorageDir(body.projectName),
-                body.projectCommands.toString()
+                body.projectCommands.toStringJson()
             )
+            //保存shell
             FileUtils.writeString(DirectoryUtils.getProjectShellStorageDir(body.projectName), body.shell)
             return "保存成功";
         }
@@ -71,10 +77,10 @@ class ProjectServiceImpl : IProjectService {
     fun applyProjectProperty(path:String,item: ProjectBean) {
         item.apply {
             shell=FileUtils.readString(DirectoryUtils.getProjectShellStorageDir(path))
-            buildCommands=DirectoryUtils.getProjectCommandStorageDir(Paths.get(path).last().toString()).toFile().toArrayList()
-            firstCommitId = GitUtils.gitLog(path)
+            buildCommands=DirectoryUtils.getProjectCommandStorageDir(path).toFile().toArrayList()
+            firstCommitId = GitUtils.gitLog(DirectoryUtils.getProjectPath(path))
             projectPath = path
-            projectName = Paths.get(path).last().toString()
+            projectName = path
             buildTool = projectBuild.getProjectBuildTool(projectPath)
         }
     }

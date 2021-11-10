@@ -30,7 +30,7 @@ class DirectoryUtils {
         }
 
         fun listProjects(): List<String> {
-            return Files.list(Paths.get(getWorkPath(), PROJECT_DIR_NAME)).map { it.toString() }.toList()
+            return Files.list(Paths.get(getWorkPath(), PROJECT_DIR_NAME)).map { it.last().toString() }.toList()
         }
 
         /**
