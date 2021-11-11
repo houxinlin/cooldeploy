@@ -12,21 +12,34 @@ import com.hxl.cooldeploy.kotlin.extent.toArrayList
 import com.hxl.cooldeploy.kotlin.extent.toFile
 import com.hxl.cooldeploy.kotlin.extent.toStringJson
 import com.hxl.cooldeploy.utils.FileUtils
+import com.hxl.cooldeploy.utils.ProjectFileUtils
+import com.hxl.cooldeploy.utils.ShellUtils
 import com.hxl.cooldeploy.vo.ProjectConfigVO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import java.io.File
 import java.nio.file.Paths
 
 @Service
 class ProjectServiceImpl : IProjectService {
     var log = org.slf4j.LoggerFactory.getLogger(ProjectServiceImpl::class.java)
 
+    override fun execProjectShell(name: String): String {
+        listProject().find { it.projectName == name }
+            ?.let { ShellUtils.runScript(DirectoryUtils.getProjectShellStorageDir(it!!.projectName)) }
+        return "OK";
+    }
+
+    override fun execProjectCommand(name: String): String {
+        listProject().find { it.projectName == name }?.let { build(it!!) }
+        return "OK"
+    }
 
     @Async
     override fun execTask(projectName: String, taskName: String) {
         if (listProject().find { it.projectName == projectName }?.buildTool == BuildToolEnum.GRADLE) {
-            return Gradle.execTask(DirectoryUtils.getProjectPath(projectName), taskName)
+            Gradle.execTask(DirectoryUtils.getProjectPath(projectName), taskName)
         }
     }
 
@@ -41,14 +54,15 @@ class ProjectServiceImpl : IProjectService {
         /**
          * 项目是否存在
          */
+        listProject().find { it.projectName == body.projectName }?.let {
+
+
+        }
         if (DirectoryUtils.hasProject(body.projectName)) {
             //保存command
-            FileUtils.writeString(
-                DirectoryUtils.getProjectCommandStorageDir(body.projectName),
-                body.projectCommands.toStringJson()
-            )
-            //保存shell
-            FileUtils.writeString(DirectoryUtils.getProjectShellStorageDir(body.projectName), body.shell)
+            ProjectFileUtils.setProjectBuildCommand(body.projectName, body.projectCommands.toStringJson())
+            ProjectFileUtils.setProjectBuildShell(body.projectName, body.shell)
+
             return "保存成功";
         }
         return "没有此项目"
@@ -65,21 +79,20 @@ class ProjectServiceImpl : IProjectService {
     override fun listProject(): List<ProjectBean> {
         var projectsPathList = DirectoryUtils.listProjects()
         var projectList = mutableListOf<ProjectBean>()
-
         for (item in projectsPathList) {
             var projectBean = ProjectBean()
-            applyProjectProperty(item,projectBean)
+            applyProjectProperty(item, projectBean)
             projectList.add(projectBean)
         }
         return projectList;
     }
 
-    fun applyProjectProperty(path:String,item: ProjectBean) {
+    fun applyProjectProperty(path: String, item: ProjectBean) {
         item.apply {
-            shell=FileUtils.readString(DirectoryUtils.getProjectShellStorageDir(path))
-            buildCommands=DirectoryUtils.getProjectCommandStorageDir(path).toFile().toArrayList()
+            shell = FileUtils.readString(DirectoryUtils.getProjectShellStorageDir(path))
+            buildCommands = DirectoryUtils.getProjectCommandStorageDir(path).toFile().toArrayList()
             firstCommitId = GitUtils.gitLog(DirectoryUtils.getProjectPath(path))
-            projectPath = path
+            projectPath = DirectoryUtils.getProjectPath(path)
             projectName = path
             buildTool = projectBuild.getProjectBuildTool(projectPath)
         }

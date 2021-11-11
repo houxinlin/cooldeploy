@@ -18,10 +18,11 @@ interface IProjectService {
     fun build(projectBean: ProjectBean)
 
     fun saveConfig(body: ProjectConfigVO): String
-    fun listTasks(projectName:String): Any
+    fun listTasks(projectName: String): Any
 
 
     fun execTask(project: String, taskName: String)
-
+    fun execProjectCommand(name: String): String
+     fun execProjectShell(name: String): String
 
 }

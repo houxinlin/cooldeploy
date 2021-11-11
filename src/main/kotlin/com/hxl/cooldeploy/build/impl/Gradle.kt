@@ -2,7 +2,9 @@ package com.hxl.cooldeploy.build.impl
 
 import com.hxl.cooldeploy.bean.ProjectBean
 import com.hxl.cooldeploy.build.Build
+import com.hxl.cooldeploy.kotlin.extent.toArrayList
 import com.hxl.cooldeploy.kotlin.extent.toFile
+import com.hxl.cooldeploy.utils.DirectoryUtils
 import org.gradle.StartParameter
 import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.ProjectConnection
@@ -16,21 +18,40 @@ import org.gradle.tooling.model.idea.IdeaProject
 import kotlin.streams.toList
 
 class Gradle : Build {
+    /**
+     * 构建
+     */
     override fun build(projectName: ProjectBean) {
-        var newConnector = GradleConnector.newConnector()
-        var connect = getConnector(projectName.projectPath)
-        var projectModel = connect.model(GradleProject::class.java)
+        var commands =
+            DirectoryUtils.getProjectCommandStorageDir(projectName.projectName).toFile().toArrayList()
+        var listTasks = listTasks(projectName.projectPath)
+        for (command in commands) {
+            if (listTasks.contains(command)) {
+                execTask(projectName.projectPath, command)
+            } else {
+                println("${command} 不存在")
+            }
+        }
+
+//        execTask(projectName.projectPath,)
     }
 
     companion object {
-        fun execTask(projectName: String, taskName: String) {
-            var connector = getConnector(projectName)
+        /**
+         * 执行Gradle Task
+         */
+        fun execTask(projectPath: String, taskName: String) {
+            var connector = getConnector(projectPath)
             var action = connector.action()
             action.build()
                 .setStandardOutput(System.out)
                 .forTasks(taskName).addArguments()
                 .run()
         }
+
+        /**
+         * 列举Gradle Task
+         */
 
         fun listTasks(projectName: String): List<String> {
             var connector = getConnector(projectName)
@@ -40,6 +61,9 @@ class Gradle : Build {
             }.toList()
         }
 
+        /**
+         * 获取项目的Connector
+         */
         fun getConnector(projectName: String): ProjectConnection {
             var newConnector = GradleConnector.newConnector()
             return newConnector

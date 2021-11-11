@@ -46,4 +46,13 @@ class ProjectController {
     ): Any {
         return ResultUtils.success(projectService.execTask(project, taskName), 0)
     }
+
+    @GetMapping("execProjectCommand")
+    fun execProjectCommand(@RequestParam("projectName") name: String): Any {
+        return ResultUtils.success(projectService.execProjectCommand(name), 0)
+    }
+    @GetMapping("execProjectShell")
+    fun execProjectShell(@RequestParam("projectName") name: String): Any {
+        return ResultUtils.success(projectService.execProjectShell(name), 0)
+    }
 }
