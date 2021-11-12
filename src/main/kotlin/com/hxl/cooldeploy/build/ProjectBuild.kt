@@ -10,12 +10,7 @@ import java.nio.file.Paths
 @Component
 class ProjectBuild {
     var log = org.slf4j.LoggerFactory.getLogger(ProjectBuild::class.java)
-    fun buildProject(name: String): String {
-        log.info("构建项目{}", name)
-        ShellUtils.runScript(Paths.get(DirectoryUtils.getWorkPath(), "shells", "$name.sh").toString())
-        log.info("构建项目{}完成", name)
-        return "OK"
-    }
+
 
     fun getProjectBuildTool(project: String): BuildToolEnum {
         var listTools = BuildToolEnum.listTools()

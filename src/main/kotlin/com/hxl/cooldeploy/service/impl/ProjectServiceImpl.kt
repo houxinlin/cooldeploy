@@ -25,6 +25,11 @@ import java.nio.file.Paths
 class ProjectServiceImpl : IProjectService {
     var log = org.slf4j.LoggerFactory.getLogger(ProjectServiceImpl::class.java)
 
+    override fun buildAndDeploy(name: String) {
+        execProjectCommand(name);
+        execProjectShell(name)
+    }
+
     override fun execProjectShell(name: String): String {
         listProject().find { it.projectName == name }
             ?.let { ShellUtils.runScript(DirectoryUtils.getProjectShellStorageDir(it!!.projectName)) }

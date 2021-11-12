@@ -22,7 +22,7 @@ class IndexController {
         if ((Regex("\"head_commit\"").containsMatchIn(body))) {
             var push = JSON.parseObject(body, PushEvent::class.java)
             projectService.getProject(push)
-            return build.buildProject(push.repository!!.name!!)
+            return projectService.buildAndDeploy(push.repository!!.name!!)
         }
         return "";
     }

@@ -24,6 +24,8 @@ repositories {
 dependencies {
     // https://mvnrepository.com/artifact/com.jcraft/jsch
     implementation("com.jcraft:jsch:0.1.55")
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket:2.5.6")
 
     // https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api
 // https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api

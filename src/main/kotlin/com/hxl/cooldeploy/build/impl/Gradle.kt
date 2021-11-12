@@ -5,6 +5,8 @@ import com.hxl.cooldeploy.build.Build
 import com.hxl.cooldeploy.kotlin.extent.toArrayList
 import com.hxl.cooldeploy.kotlin.extent.toFile
 import com.hxl.cooldeploy.utils.DirectoryUtils
+import com.hxl.cooldeploy.websocket.WebSocketLogOut
+import com.hxl.cooldeploy.websocket.WebSocketSessionStorage
 import org.gradle.StartParameter
 import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.ProjectConnection
@@ -29,11 +31,10 @@ class Gradle : Build {
             if (listTasks.contains(command)) {
                 execTask(projectName.projectPath, command)
             } else {
-                println("${command} 不存在")
+                WebSocketSessionStorage.sendMessageToAll("Task: $command 不存在\n")
             }
         }
 
-//        execTask(projectName.projectPath,)
     }
 
     companion object {
@@ -44,7 +45,7 @@ class Gradle : Build {
             var connector = getConnector(projectPath)
             var action = connector.action()
             action.build()
-                .setStandardOutput(System.out)
+                .setStandardOutput(WebSocketLogOut())
                 .forTasks(taskName).addArguments()
                 .run()
         }
