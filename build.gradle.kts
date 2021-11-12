@@ -26,6 +26,8 @@ dependencies {
     implementation("com.jcraft:jsch:0.1.55")
 // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket:2.5.6")
+// https://mvnrepository.com/artifact/org.apache.maven.shared/maven-invoker
+    implementation("org.apache.maven.shared:maven-invoker:3.1.0")
 
     // https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api
 // https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api

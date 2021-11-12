@@ -12,7 +12,7 @@ enum class BuildToolEnum(
     val featuresFileName: List<String>
 ) {
     GRADLE(Gradle::class, "gradle", mutableListOf("gradlew", "gradle/wrapper/gradle-wrapper.jar")),
-    MAVEN(Maven::class,"maven", mutableListOf()),
+    MAVEN(Maven::class,"maven", mutableListOf("pom.xml")),
     NPM(Npm::class,"npm", mutableListOf("package.json")),
     NONE(None::class,"none", mutableListOf());
 

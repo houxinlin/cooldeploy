@@ -51,8 +51,14 @@ class ProjectController {
     fun execProjectCommand(@RequestParam("projectName") name: String): Any {
         return ResultUtils.success(projectService.execProjectCommand(name), 0)
     }
+
     @GetMapping("execProjectShell")
     fun execProjectShell(@RequestParam("projectName") name: String): Any {
         return ResultUtils.success(projectService.execProjectShell(name), 0)
+    }
+
+    @GetMapping("buildAndDeploy")
+    fun buildAndDeploy(@RequestParam("projectName") name: String): Any {
+        return ResultUtils.success(projectService.buildAndDeploy(name), 0)
     }
 }

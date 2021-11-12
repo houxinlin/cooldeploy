@@ -7,6 +7,7 @@ import jdk.nashorn.tools.Shell
  * 项目信息相关
  */
 data class ProjectBean(
+    var evn: MutableMap<String, String>,
     var buildCommands: List<String>,
     var shell: String,
     var firstCommitId: String,
@@ -16,6 +17,7 @@ data class ProjectBean(
     var packageList: MutableList<String>
 ) {
     constructor() : this(
+        mutableMapOf<String, String>(),
         mutableListOf(),
         "",
         "",

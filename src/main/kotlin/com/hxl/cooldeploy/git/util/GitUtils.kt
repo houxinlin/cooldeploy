@@ -15,9 +15,14 @@ class GitUtils {
             var pull = Git.open(dir.toFile()).pull().call()
             return pull.isSuccessful
         }
-        fun  gitLog(dir:String):String{
-            var first = Git.open(dir.toFile()).log().call().first()
-            return first.name;
+
+        fun gitLog(dir: String): String {
+            return try {
+                var first = Git.open(dir.toFile()).log().call().first()
+                first.name;
+            } catch (e: Exception) {
+                "";
+            }
         }
 
         fun clone(url: String, dir: String): Boolean {
@@ -29,7 +34,7 @@ class GitUtils {
                         val sshTransport = transport as SshTransport
                         sshTransport.sshSessionFactory = SshSessionFactory()
                     }
-                }).setCallback(object : CloneCommand.Callback{
+                }).setCallback(object : CloneCommand.Callback {
                     override fun initializedSubmodules(submodules: MutableCollection<String>?) {
                     }
 

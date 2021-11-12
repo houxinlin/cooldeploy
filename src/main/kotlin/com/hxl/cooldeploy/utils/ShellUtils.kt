@@ -22,10 +22,12 @@ object ShellUtils {
 
         return if (File(path).canExecute()) {
             val processBuilder = ProcessBuilder(path)
-            processBuilder.inheritIO()
+
             val process = processBuilder.start()
             process.waitFor()
-            WebSocketSessionStorage.sendMessageToAll(process.inputStream.bufferedReader().readText())
+            var readText = process.inputStream.bufferedReader().readText()
+
+            WebSocketSessionStorage.sendMessageToAll(readText)
             "OK"
         } else {
             WebSocketSessionStorage.sendMessageToAll("项目脚本${path} 文件无权限执行\n")
