@@ -1,6 +1,7 @@
 package com.hxl.cooldeploy.git.util
 
 import com.hxl.cooldeploy.kotlin.extent.toFile
+import com.hxl.cooldeploy.websocket.WebSocketSessionStorage
 import org.eclipse.jgit.api.CloneCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.TransportConfigCallback
@@ -26,15 +27,14 @@ class GitUtils {
         }
 
         fun clone(url: String, dir: String): Boolean {
+            WebSocketSessionStorage.sendMessageToAll("clone项目${url}->${dir}\n")
             Git.cloneRepository()
                 .setURI(url)
                 .setDirectory(dir.toFile())
-                .setTransportConfigCallback(object : TransportConfigCallback {
-                    override fun configure(transport: Transport?) {
-                        val sshTransport = transport as SshTransport
-                        sshTransport.sshSessionFactory = SshSessionFactory()
-                    }
-                }).setCallback(object : CloneCommand.Callback {
+                .setTransportConfigCallback { transport ->
+                    val sshTransport = transport as SshTransport
+                    sshTransport.sshSessionFactory = SshSessionFactory()
+                }.setCallback(object : CloneCommand.Callback {
                     override fun initializedSubmodules(submodules: MutableCollection<String>?) {
                     }
 
@@ -45,6 +45,7 @@ class GitUtils {
                     }
                 })
                 .call()
+            WebSocketSessionStorage.sendMessageToAll("clone项目完毕\n")
             return true;
         }
     }

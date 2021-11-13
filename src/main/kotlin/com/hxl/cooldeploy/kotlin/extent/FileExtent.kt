@@ -3,6 +3,7 @@ package com.hxl.cooldeploy.kotlin.extent
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.hxl.cooldeploy.resolver.CustomHttpRequestBody
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -32,4 +33,15 @@ fun File.toArrayList(): List<String> {
     } catch (e: Exception) {
         return emptyList();
     }
+}
+
+fun File.toMap(): MutableMap<String, String> {
+    var mapType = TypeFactory.defaultInstance()
+        .constructMapType(Map::class.java, String::class.java, String::class.java)
+    val mapper = ObjectMapper()
+    var readText = this.readText()
+    if (readText.isBlank()) {
+        return mutableMapOf<String, String>();
+    }
+   return   mapper.readValue(this, mapType)
 }

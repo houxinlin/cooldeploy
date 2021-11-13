@@ -19,14 +19,11 @@ object ShellUtils {
             WebSocketSessionStorage.sendMessageToAll("项目脚本${path} 不存在\n")
             return "文件不存在"
         }
-
         return if (File(path).canExecute()) {
             val processBuilder = ProcessBuilder(path)
-
             val process = processBuilder.start()
             process.waitFor()
             var readText = process.inputStream.bufferedReader().readText()
-
             WebSocketSessionStorage.sendMessageToAll(readText)
             "OK"
         } else {

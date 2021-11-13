@@ -25,15 +25,11 @@ class JsonObjectValueHandlerMethodArgumentResolver : HandlerMethodArgumentResolv
         var key = parameter.getParameterAnnotation(JsonObjectValue::class.java)!!.key
         var mapType = TypeFactory.defaultInstance()
             .constructMapType(Map::class.java, String::class.java, String::class.java)
-        var requestWrapper = (webRequest.nativeRequest as HttpServletRequest);
+        var requestWrapper = (webRequest.nativeRequest as CustomHttpRequestBody);
         val mapper = ObjectMapper()
-        var body = if (threadLocal.get() != null) {
-            threadLocal.get()
-        } else {
-            requestWrapper.inputStream.bufferedReader().readText();
-        }
-        threadLocal.set(body)
-        val o: HashMap<String?, Any?>? = mapper.readValue(body!!, mapType)
+
+        var string = requestWrapper.inputStream.bufferedReader()
+        val o: HashMap<String?, Any?>? = mapper.readValue(string, mapType)
         return o?.get(key);
     }
 }

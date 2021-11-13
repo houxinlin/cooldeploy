@@ -20,7 +20,6 @@ import java.lang.Exception
 @EnableWebSocket
 class WebSocketConfig:WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        print("a")
         registry
             .addHandler(WebSocketHandlerImpl(),"wbs")
             .addInterceptors(WebSocketInterceptorImpl())

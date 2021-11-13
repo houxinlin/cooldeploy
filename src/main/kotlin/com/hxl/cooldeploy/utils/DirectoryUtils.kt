@@ -1,6 +1,8 @@
 package com.hxl.cooldeploy.utils
 
-import org.eclipse.jgit.util.FileUtils
+
+import com.hxl.cooldeploy.config.SystemDefaultConfig
+import com.hxl.cooldeploy.kotlin.extent.toJsonString
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -8,6 +10,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Stream
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
 import kotlin.streams.toList
 
 class DirectoryUtils {
@@ -16,16 +21,22 @@ class DirectoryUtils {
         private const val PROJECT_DIR_NAME = "projects"
         private const val COMMAND_DIR_NAME = "commands"
         private const val SHELL_DIR_NAME = "shells"
-
+        private const val SYSTEM_CONFIG = "config"
         fun getProjectCommandStorageDir(name: String): String {
             return Paths.get(getChildDir(COMMAND_DIR_NAME), name, "index.data").toString()
+        }
+
+        fun getSystemConfigFile(): String {
+            var config = Paths.get(getWorkPath(), SYSTEM_CONFIG, "config.json")
+            if (!config.exists()) config.createFile()
+            return config.toString()
         }
 
         fun getProjectShellStorageDir(name: String): String {
             return Paths.get(getChildDir(SHELL_DIR_NAME), name, "index.sh").toString()
         }
 
-        fun getChildDir(name: String): String {
+        private fun getChildDir(name: String): String {
             return Paths.get(getWorkPath(), name).toString();
         }
 
@@ -36,7 +47,7 @@ class DirectoryUtils {
         /**
          * 获取工作路径
          */
-        fun getWorkPath(): String {
+        private fun getWorkPath(): String {
             return FileSystems.getDefault().getPath(WORK_DIR_NAME).absolutePathString()
         }
 
@@ -70,6 +81,22 @@ class DirectoryUtils {
 
         fun hasProject(name: String): Boolean {
             return projectIsExist(name)
+        }
+
+        private fun createChildDir(vararg name: String) {
+            for (s in name) {
+                if (!Paths.get(s).exists())
+                    Paths.get(s).createDirectories()
+            }
+        }
+
+        fun initNecessaryFile() {
+            createChildDir(
+                getChildDir(PROJECT_DIR_NAME),
+                getChildDir(COMMAND_DIR_NAME),
+                getChildDir(SHELL_DIR_NAME),
+                getChildDir(SYSTEM_CONFIG),
+            )
         }
     }
 }

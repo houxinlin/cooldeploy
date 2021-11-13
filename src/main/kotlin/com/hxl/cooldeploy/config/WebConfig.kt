@@ -11,6 +11,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import javax.servlet.http.HttpServletRequest
@@ -22,6 +23,11 @@ class WebConfig : WebMvcConfigurer {
         super.addViewControllers(registry)
 //        registry.addViewController("/").setViewName("index")
 //        registry.addViewController("/project").setViewName("project")
+    }
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(UserInterceptor())
+            .addPathPatterns("/**")
+            .excludePathPatterns("/api/system/login")
     }
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
