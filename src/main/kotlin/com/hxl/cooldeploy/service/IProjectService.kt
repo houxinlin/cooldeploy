@@ -8,7 +8,7 @@ interface IProjectService {
     fun cloneProject(sshUrl: String, dir: String): Boolean;
     fun pullProject(dir: String): Boolean;
     fun getProject(event: PushEvent): Boolean;
-    fun cloneProject(url: String): Boolean;
+    fun cloneProject(url: String);
     fun listProject(): List<ProjectBean>
     fun build(projectBean: ProjectBean)
     fun saveConfig(body: ProjectConfigVO): String

@@ -92,6 +92,7 @@ class DirectoryUtils {
 
         fun initNecessaryFile() {
             createChildDir(
+                getWorkPath(),
                 getChildDir(PROJECT_DIR_NAME),
                 getChildDir(COMMAND_DIR_NAME),
                 getChildDir(SHELL_DIR_NAME),

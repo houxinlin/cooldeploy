@@ -17,13 +17,6 @@ data class ProjectBean(
     var packageList: MutableList<String>
 ) {
     constructor() : this(
-        mutableMapOf<String, String>(),
-        mutableListOf(),
-        "",
-        "",
-        "",
-        "",
-        BuildToolEnum.NONE,
-        mutableListOf()
+        mutableMapOf<String, String>(), mutableListOf(), "", "", "", "", BuildToolEnum.NONE, mutableListOf()
     )
 }

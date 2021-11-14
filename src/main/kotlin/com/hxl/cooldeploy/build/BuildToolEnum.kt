@@ -15,10 +15,6 @@ enum class BuildToolEnum(
     MAVEN(Maven::class,"maven", mutableListOf("pom.xml")),
     NPM(Npm::class,"npm", mutableListOf("package.json")),
     NONE(None::class,"none", mutableListOf());
-
-    override fun toString(): String {
-        return  this.toolName
-    }
     companion object {
         @JvmStatic
         fun listTools(): MutableList<BuildToolEnum> {

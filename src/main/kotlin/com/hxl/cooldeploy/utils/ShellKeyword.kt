@@ -7,7 +7,7 @@ class ShellKeyword {
     companion object {
         fun generatorMap(item: ProjectBean): MutableMap<String, String> {
             return mutableMapOf<String, String>().apply {
-                put("Project_HOME", item.projectPath)
+                put("Project_Home", item.projectPath)
                 System.getenv().forEach { (t, u) -> put(t, u) }
             }
         }
@@ -16,10 +16,8 @@ class ShellKeyword {
     fun generatorNewString(old: String, projectBean: ProjectBean): String {
         var newString = old;
         for (key in projectBean.evn.keys) {
-            println(key + "  " + projectBean.evn.get(key))
-            newString = newString.replace("{Project_HOME}", projectBean.evn[key]!!)
+            newString = newString.replace("{${key}}", projectBean.evn[key]!!)
         }
-        println(newString)
         return newString;
     }
 

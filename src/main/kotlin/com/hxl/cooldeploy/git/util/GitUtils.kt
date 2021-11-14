@@ -13,8 +13,18 @@ import java.io.File
 class GitUtils {
     companion object {
         fun pull(dir: String): Boolean {
-            var pull = Git.open(dir.toFile()).pull().call()
-            return pull.isSuccessful
+            try {
+                var pull = Git.open(dir.toFile())
+                    .pull().setTransportConfigCallback { transport ->
+                        val sshTransport = transport as SshTransport
+                        sshTransport.sshSessionFactory = SshSessionFactory()
+                    }.call()
+                WebSocketSessionStorage.sendMessageToAll("${dir} pull 完成\n")
+                return pull.isSuccessful
+            } catch (e: Exception) {
+                WebSocketSessionStorage.sendMessageToAll(e.localizedMessage + "\n")
+            }
+            return false;
         }
 
         fun gitLog(dir: String): String {
@@ -27,25 +37,19 @@ class GitUtils {
         }
 
         fun clone(url: String, dir: String): Boolean {
-            WebSocketSessionStorage.sendMessageToAll("clone项目${url}->${dir}\n")
-            Git.cloneRepository()
-                .setURI(url)
-                .setDirectory(dir.toFile())
-                .setTransportConfigCallback { transport ->
-                    val sshTransport = transport as SshTransport
-                    sshTransport.sshSessionFactory = SshSessionFactory()
-                }.setCallback(object : CloneCommand.Callback {
-                    override fun initializedSubmodules(submodules: MutableCollection<String>?) {
-                    }
-
-                    override fun cloningSubmodule(path: String?) {
-                    }
-
-                    override fun checkingOut(commit: AnyObjectId?, path: String?) {
-                    }
-                })
-                .call()
-            WebSocketSessionStorage.sendMessageToAll("clone项目完毕\n")
+            try {
+                WebSocketSessionStorage.sendMessageToAll("clone项目${url}->${dir}\n")
+                Git.cloneRepository()
+                    .setURI(url)
+                    .setDirectory(dir.toFile())
+                    .setTransportConfigCallback { transport ->
+                        val sshTransport = transport as SshTransport
+                        sshTransport.sshSessionFactory = SshSessionFactory()
+                    }.call()
+                WebSocketSessionStorage.sendMessageToAll("clone项目完毕\n")
+            } catch (e: Exception) {
+                WebSocketSessionStorage.sendMessageToAll(e.localizedMessage + "\n")
+            }
             return true;
         }
     }

@@ -57,6 +57,7 @@ class Gradle : Build {
         fun listTasks(projectName: String): List<String> {
             var connector = getConnector(projectName)
             var projectModel = connector.model(GradleProject::class.java)
+            projectModel.setStandardOutput(WebSocketLogOut())
             return projectModel.get().tasks.stream().map {
                 it.name
             }.toList()

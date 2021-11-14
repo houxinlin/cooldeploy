@@ -87,7 +87,7 @@ class ProjectServiceImpl : IProjectService {
 
     fun applyProjectProperty(path: String, item: ProjectBean) {
         item.apply {
-            shell = FileUtils.readString(DirectoryUtils.getProjectShellStorageDir(path),"#!/bin/sh\n")
+            shell = FileUtils.readString(DirectoryUtils.getProjectShellStorageDir(path), "#!/bin/sh\n")
             buildCommands = DirectoryUtils.getProjectCommandStorageDir(path).toFile().toArrayList()
             firstCommitId = GitUtils.gitLog(DirectoryUtils.getProjectPath(path))
             projectPath = DirectoryUtils.getProjectPath(path)
@@ -102,20 +102,21 @@ class ProjectServiceImpl : IProjectService {
         return GitUtils.clone(sshUrl, dir)
     }
 
+
     override fun pullProject(dir: String): Boolean {
-        log.info("pull项目{}", dir)
+        log.info("pull项目{}", DirectoryUtils.getProjectPath(dir))
         return GitUtils.pull(DirectoryUtils.getProjectPath(dir))
     }
 
 
-    override fun cloneProject(url: String): Boolean {
+    @Async
+    override fun cloneProject(url: String) {
         var name = url.substring(url.lastIndexOf("/") + 1).removeSuffix(".git")
         if (DirectoryUtils.projectIsExist(name)) {
-            return pullProject(name)
+            pullProject(name)
         }
         log.info("close项目{},名称{}", url, name)
-
-        return GitUtils.clone(url, DirectoryUtils.getProjectPath(name));
+        cloneProject(url, DirectoryUtils.getProjectPath(name));
     }
 
     override fun getProject(event: PushEvent): Boolean {

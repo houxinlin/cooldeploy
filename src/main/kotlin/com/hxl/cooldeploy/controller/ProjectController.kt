@@ -26,7 +26,7 @@ class ProjectController {
             var project = projectService.cloneProject(address)
             println("${project}")
         }
-        return "clone"
+        return "OK"
     }
 
     @GetMapping("listTasks")
@@ -60,5 +60,10 @@ class ProjectController {
     @GetMapping("buildAndDeploy")
     fun buildAndDeploy(@RequestParam("projectName") name: String): Any {
         return ResultUtils.success(projectService.buildAndDeploy(name), 0)
+    }
+
+    @GetMapping("pullProject")
+    fun pullProject(@RequestParam("projectName") name: String): Any {
+        return ResultUtils.success(projectService.pullProject(name), 0)
     }
 }
