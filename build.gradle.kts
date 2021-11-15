@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "2.5.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.31"
+    war
     kotlin("plugin.spring") version "1.5.31"
 }
 
@@ -19,27 +20,25 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.gradle.org/gradle/libs-releases") }
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.jcraft/jsch
+    implementation("org.gradle:gradle-tooling-api:7.3")
+
+// https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api
+//    implementation("org.gradle:gradle-tooling-api:7.3")
     implementation("com.jcraft:jsch:0.1.55")
-// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket:2.5.6")
-// https://mvnrepository.com/artifact/org.apache.maven.shared/maven-invoker
     implementation("org.apache.maven.shared:maven-invoker:3.1.0")
 
-    // https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api
-// https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api
-    implementation("org.gradle:gradle-tooling-api:7.3-20210825160000+0000")
+//    implementation("org.gradle:gradle-tooling-api:7.3")
 
 
     implementation("com.alibaba:fastjson:1.2.78")
-// https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
     implementation("org.eclipse.jgit:org.eclipse.jgit:5.2.1.201812262042-r"){
         exclude("com.jcraft","jsch")
     }
-// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket:2.5.6")
 
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

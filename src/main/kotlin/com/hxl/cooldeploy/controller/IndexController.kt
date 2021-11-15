@@ -22,7 +22,8 @@ class IndexController {
     @PostMapping("test")
     fun test(
         @JsonObjectValue("a") map: String,
-        @JsonObjectValue("b") map2: String): String {
+        @JsonObjectValue("b") map2: String
+    ): String {
         println(map)
         return "";
     }
@@ -31,9 +32,8 @@ class IndexController {
     fun index(@RequestBody body: String): Any {
         if ((Regex("\"head_commit\"").containsMatchIn(body))) {
             var push = JSON.parseObject(body, PushEvent::class.java)
-            projectService.getProject(push)
-            return projectService.buildAndDeploy(push.repository!!.name!!)
+            projectService.autoBuildProject(push)
         }
-        return "";
+        return "OK";
     }
 }

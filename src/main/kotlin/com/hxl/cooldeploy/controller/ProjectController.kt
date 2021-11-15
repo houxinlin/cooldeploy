@@ -2,10 +2,13 @@ package com.hxl.cooldeploy.controller
 
 import com.hxl.cooldeploy.resolver.JsonObjectValue
 import com.hxl.cooldeploy.service.IProjectService
+import com.hxl.cooldeploy.utils.DirectoryUtils
 import com.hxl.cooldeploy.utils.ResultUtils
 import com.hxl.cooldeploy.vo.ProjectConfigVO
+import org.gradle.tooling.GradleConnector
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import java.io.File
 
 @RestController
 @RequestMapping("api/project")
@@ -21,11 +24,13 @@ class ProjectController {
     }
 
     @PostMapping("cloneProject")
-    fun cloneProject(@JsonObjectValue("address") address: String?): String {
-        address?.let {
-            var project = projectService.cloneProject(address)
-            println("${project}")
+    fun cloneProject(@JsonObjectValue("address") url: String): String {
+        var name = url.substring(url.lastIndexOf("/") + 1).removeSuffix(".git")
+        if (DirectoryUtils.projectIsExist(name)) {
+            pullProject(name)
+            return "OK"
         }
+        projectService.cloneProject(url, DirectoryUtils.getProjectPath(name)).get();
         return "OK"
     }
 
@@ -44,12 +49,14 @@ class ProjectController {
         @JsonObjectValue("projectName") project: String,
         @JsonObjectValue("taskName") taskName: String
     ): Any {
-        return ResultUtils.success(projectService.execTask(project, taskName), 0)
+        ResultUtils.success(projectService.execTask(project, taskName), 0)
+        return "OK";
     }
 
     @GetMapping("execProjectCommand")
     fun execProjectCommand(@RequestParam("projectName") name: String): Any {
-        return ResultUtils.success(projectService.execProjectCommand(name), 0)
+        ResultUtils.success(projectService.execProjectCommand(name), 0)
+        return "OK"
     }
 
     @GetMapping("execProjectShell")
@@ -64,6 +71,7 @@ class ProjectController {
 
     @GetMapping("pullProject")
     fun pullProject(@RequestParam("projectName") name: String): Any {
-        return ResultUtils.success(projectService.pullProject(name), 0)
+        projectService.pullProject(name)
+        return ResultUtils.success("OK", 0)
     }
 }

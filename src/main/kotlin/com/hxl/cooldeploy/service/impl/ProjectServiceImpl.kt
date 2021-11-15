@@ -5,41 +5,40 @@ import com.hxl.cooldeploy.build.BuildToolEnum
 import com.hxl.cooldeploy.build.ProjectBuild
 import com.hxl.cooldeploy.build.impl.Gradle
 import com.hxl.cooldeploy.git.event.PushEvent
-import com.hxl.cooldeploy.service.IProjectService
 import com.hxl.cooldeploy.git.util.GitUtils
 import com.hxl.cooldeploy.kotlin.extent.toArrayList
 import com.hxl.cooldeploy.kotlin.extent.toFile
 import com.hxl.cooldeploy.kotlin.extent.toStringJson
+import com.hxl.cooldeploy.service.IProjectService
 import com.hxl.cooldeploy.utils.*
 import com.hxl.cooldeploy.vo.ProjectConfigVO
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.AsyncResult
 import org.springframework.stereotype.Service
+import java.util.concurrent.Future
+
 
 @Service
 class ProjectServiceImpl : IProjectService {
     var log = org.slf4j.LoggerFactory.getLogger(ProjectServiceImpl::class.java)
 
-    @Async
     override fun buildAndDeploy(name: String) {
         execProjectCommand(name);
         execProjectShell(name)
     }
 
-    @Async
     override fun execProjectShell(name: String): String {
         listProject().find { it.projectName == name }
             ?.let { ShellUtils.runScript(DirectoryUtils.getProjectShellStorageDir(it!!.projectName)) }
         return "OK";
     }
 
-    @Async
     override fun execProjectCommand(name: String): String {
         listProject().find { it.projectName == name }?.let { build(it!!) }
         return "OK"
     }
 
-    @Async
     override fun execTask(projectName: String, taskName: String) {
         if (listProject().find { it.projectName == projectName }?.buildTool == BuildToolEnum.GRADLE) {
             Gradle.execTask(DirectoryUtils.getProjectPath(projectName), taskName)
@@ -97,40 +96,36 @@ class ProjectServiceImpl : IProjectService {
         }
     }
 
-    override fun cloneProject(sshUrl: String, dir: String): Boolean {
+    override fun cloneProject(sshUrl: String, dir: String): Future<Boolean> {
         log.info("clone项目{}", sshUrl)
-        return GitUtils.clone(sshUrl, dir)
+        GitUtils.clone(sshUrl, dir)
+        return AsyncResult<Boolean>(true)
     }
 
 
-    override fun pullProject(dir: String): Boolean {
+    override fun pullProject(dir: String): Future<Boolean> {
         log.info("pull项目{}", DirectoryUtils.getProjectPath(dir))
-        return GitUtils.pull(DirectoryUtils.getProjectPath(dir))
+        GitUtils.pull(DirectoryUtils.getProjectPath(dir))
+        return AsyncResult<Boolean>(true)
     }
 
 
-    @Async
-    override fun cloneProject(url: String) {
-        var name = url.substring(url.lastIndexOf("/") + 1).removeSuffix(".git")
+    /**
+     * Github触发
+     */
+    override fun autoBuildProject(event: PushEvent): Boolean {
+        var name = event.repository!!.name!!;
         if (DirectoryUtils.projectIsExist(name)) {
-            pullProject(name)
-        }
-        log.info("close项目{},名称{}", url, name)
-        cloneProject(url, DirectoryUtils.getProjectPath(name));
-    }
-
-    override fun getProject(event: PushEvent): Boolean {
-        /**
-         * 如果项目不存在，则clone,存在则pull
-         */
-        return if (DirectoryUtils.projectIsExist(event.repository!!.name!!)) {
-            pullProject(event.repository!!.name!!)
+            pullProject(event.repository!!.name!!).get()
         } else {
             cloneProject(
-                DirectoryUtils.getProjectPath(event.repository!!.ssh_url!!),
-                DirectoryUtils.getProjectPath(event.repository!!.name!!)
-            )
+                DirectoryUtils.getProjectPath(event.repository!!.ssh_url!!), DirectoryUtils.getProjectPath(name)
+            ).get()
+            buildAndDeploy(name)
+
         }
+
+        return true
 
     }
 }

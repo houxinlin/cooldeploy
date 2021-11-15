@@ -1,32 +1,35 @@
 package com.hxl.cooldeploy.config
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.type.TypeFactory
-import com.hxl.cooldeploy.resolver.JsonObjectValue
 import com.hxl.cooldeploy.resolver.JsonObjectValueHandlerMethodArgumentResolver
+import org.springframework.boot.web.server.ErrorPage
+import org.springframework.boot.web.server.WebServerFactoryCustomizer
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.MethodParameter
-import org.springframework.web.bind.support.WebDataBinderFactory
-import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.http.HttpStatus
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
-import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import javax.servlet.http.HttpServletRequest
 
 
 @Configuration
 class WebConfig : WebMvcConfigurer {
     override fun addViewControllers(registry: ViewControllerRegistry) {
         super.addViewControllers(registry)
-//        registry.addViewController("/").setViewName("index")
-//        registry.addViewController("/project").setViewName("project")
     }
+
+    @Bean
+    fun webServerFactoryCustomizer(): WebServerFactoryCustomizer<*>? {
+        return WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> { factory ->
+            val error404Page = ErrorPage(HttpStatus.NOT_FOUND, "/index.html")
+            factory.addErrorPages(error404Page)
+        }
+    }
+
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(UserInterceptor())
-            .addPathPatterns("/**")
+            .addPathPatterns("/api/**")
             .excludePathPatterns("/api/system/login")
     }
 
