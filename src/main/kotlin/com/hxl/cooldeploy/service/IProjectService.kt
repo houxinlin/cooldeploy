@@ -14,16 +14,16 @@ interface IProjectService {
     fun pullProject(dir: String): Future<Boolean>
 
     @Async
-    fun execTask(project: String, taskName: String)
+    fun execTask(project: String, taskName: String): Future<Boolean>
 
     @Async
-    fun execProjectCommand(name: String): String
+    fun execProjectCommand(name: String): Future<Boolean>
 
     @Async
-    fun execProjectShell(name: String): String
+    fun execProjectShell(name: String): Future<Boolean>
 
     @Async
-    fun buildAndDeploy(name: String)
+    fun buildAndDeploy(name: String): Future<Boolean>
 
     fun autoBuildProject(event: PushEvent): Boolean
     fun listProject(): List<ProjectBean>

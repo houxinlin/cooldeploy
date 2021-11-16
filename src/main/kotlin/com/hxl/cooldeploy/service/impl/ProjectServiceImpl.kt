@@ -23,26 +23,29 @@ import java.util.concurrent.Future
 class ProjectServiceImpl : IProjectService {
     var log = org.slf4j.LoggerFactory.getLogger(ProjectServiceImpl::class.java)
 
-    override fun buildAndDeploy(name: String) {
-        execProjectCommand(name);
-        execProjectShell(name)
+    override fun buildAndDeploy(name: String): Future<Boolean> {
+        log.info("自动构建项目{}", name)
+        execProjectCommand(name).get()
+        execProjectShell(name).get()
+        return AsyncResult<Boolean>(true)
     }
 
-    override fun execProjectShell(name: String): String {
+    override fun execProjectShell(name: String): Future<Boolean> {
         listProject().find { it.projectName == name }
             ?.let { ShellUtils.runScript(DirectoryUtils.getProjectShellStorageDir(it!!.projectName)) }
-        return "OK";
+        return AsyncResult<Boolean>(true)
     }
 
-    override fun execProjectCommand(name: String): String {
+    override fun execProjectCommand(name: String): Future<Boolean> {
         listProject().find { it.projectName == name }?.let { build(it!!) }
-        return "OK"
+        return AsyncResult<Boolean>(true)
     }
 
-    override fun execTask(projectName: String, taskName: String) {
+    override fun execTask(projectName: String, taskName: String): Future<Boolean> {
         if (listProject().find { it.projectName == projectName }?.buildTool == BuildToolEnum.GRADLE) {
             Gradle.execTask(DirectoryUtils.getProjectPath(projectName), taskName)
         }
+        return AsyncResult<Boolean>(true)
     }
 
     override fun listTasks(projectName: String): Any {
@@ -106,6 +109,7 @@ class ProjectServiceImpl : IProjectService {
     override fun pullProject(dir: String): Future<Boolean> {
         log.info("pull项目{}", DirectoryUtils.getProjectPath(dir))
         GitUtils.pull(DirectoryUtils.getProjectPath(dir))
+        log.info("pull项目{}完成", DirectoryUtils.getProjectPath(dir))
         return AsyncResult<Boolean>(true)
     }
 
@@ -119,11 +123,11 @@ class ProjectServiceImpl : IProjectService {
             pullProject(event.repository!!.name!!).get()
         } else {
             cloneProject(
-                DirectoryUtils.getProjectPath(event.repository!!.ssh_url!!), DirectoryUtils.getProjectPath(name)
+                DirectoryUtils.getProjectPath(event.repository!!.ssh_url!!),
+                DirectoryUtils.getProjectPath(name)
             ).get()
-            buildAndDeploy(name)
-
         }
+        buildAndDeploy(name)
 
         return true
 
