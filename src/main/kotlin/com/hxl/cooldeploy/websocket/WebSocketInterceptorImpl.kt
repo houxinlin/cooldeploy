@@ -13,6 +13,7 @@ class WebSocketInterceptorImpl: HandshakeInterceptor {
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>
     ): Boolean {
+
         return true;
     }
 

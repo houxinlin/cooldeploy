@@ -40,7 +40,7 @@ class Gradle : Build {
                 WebSocketSessionStorage.sendMessageToAll("Task: $command 不存在\n")
             }
         }
-
+        WebSocketSessionStorage.sendMessageToAll("gradle命令执行完成${commands}\n")
     }
 
     companion object {
