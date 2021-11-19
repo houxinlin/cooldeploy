@@ -27,7 +27,6 @@ object ShellUtils {
             return start.errorStream.bufferedReader().readText()
         }
         var readText = start.inputStream.bufferedReader().readText()
-        println("执行结果${readText}")
         return readText
     }
 

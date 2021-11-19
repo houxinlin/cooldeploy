@@ -3,7 +3,10 @@ package com.hxl.cooldeploy.controller
 import com.hxl.cooldeploy.kotlin.extent.toFile
 import com.hxl.cooldeploy.resolver.JsonObjectValue
 import com.hxl.cooldeploy.service.ISystemService
+import com.hxl.cooldeploy.utils.Command
+import com.hxl.cooldeploy.utils.CommandBuild
 import com.hxl.cooldeploy.utils.ResultUtils
+import com.hxl.cooldeploy.utils.ShellUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -58,8 +61,12 @@ class SystemController {
 
     @GetMapping("generatorRsa")
     fun generator(): Any {
-        var path = Paths.get(System.getenv("HOME"), ".ssh", "${SSH_NAME}").toFile()
-        var start = ProcessBuilder().command("bash", "-c", "ssh-keygen -m PEM -b 2048 -f  ${path} -q -N \"\"").start()
-        return ResultUtils.success("${start.waitFor()}", 0);
+        var path = Paths.get(System.getenv("HOME"), ".ssh", "${SSH_NAME}")
+        println(path)
+        var result = ShellUtils.runCommand(
+            System.getProperty("user.home"),
+            CommandBuild().addCommand(CommandBuild.format(Command.SSH_KEY, path.toString())).get()
+        )
+        return ResultUtils.success("${result}", 0);
     }
 }
