@@ -1,6 +1,5 @@
 package com.hxl.cooldeploy.controller
 
-import com.hxl.cooldeploy.kotlin.extent.toFile
 import com.hxl.cooldeploy.resolver.JsonObjectValue
 import com.hxl.cooldeploy.service.ISystemService
 import com.hxl.cooldeploy.utils.Command
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import sun.security.util.Password
 import java.nio.file.Paths
 import javax.servlet.http.HttpServletRequest
 

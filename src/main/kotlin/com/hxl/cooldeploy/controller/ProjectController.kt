@@ -30,7 +30,7 @@ class ProjectController {
             pullProject(name)
             return "OK"
         }
-        projectService.cloneProject(url, DirectoryUtils.getProjectPath(name)).get();
+        projectService.cloneProject(url, DirectoryUtils.getProjectPath(name));
         return "OK"
     }
 
@@ -56,7 +56,7 @@ class ProjectController {
     @GetMapping("execProjectCommand")
     fun execProjectCommand(@RequestParam("projectName") name: String): Any {
         projectService.execProjectCommand(name);
-       return ResultUtils.success("OK", 0)
+        return ResultUtils.success("OK", 0)
     }
 
     @GetMapping("execProjectShell")
