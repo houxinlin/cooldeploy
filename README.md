@@ -1,5 +1,5 @@
 # CoolDeploy
-轻量级自动构建工具
+轻量级自动构建/部署工具
 ![image](https://user-images.githubusercontent.com/38684327/142714057-c95e059a-f1de-4ab7-b46e-7d113748f253.png)
 
 # 部署
@@ -13,3 +13,5 @@ cd CoolDeploy
 
 java -jar build/libs/CoolDeploy.jar
 ```
+
+注：默认密码cooldeploy
